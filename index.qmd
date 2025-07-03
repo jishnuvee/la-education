@@ -5,10 +5,6 @@ execute:
 ---
 
 
-
-
-
-
 ```{r}
 #| message: false
 #| warning: false
@@ -77,4 +73,11 @@ leaflet(edu_clean) %>%
 
 
 ```
+
+
+
+
+
+
+
 
