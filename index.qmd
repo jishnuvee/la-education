@@ -75,6 +75,8 @@ leaflet(edu_clean) %>%
 ```
 
 
+This interactive map visualizes the percentage of adults holding a bachelor's degree or higher across census tracts in Los Angeles County. The map uses a color gradient ranging from light yellow to deep blue, where lighter areas indicate lower educational attainment and darker blue areas represent higher percentages of degree holders. Concentrations of higher educational attainment appear mainly in central and western parts of the county, including many neighborhoods within the city of Los Angeles, while some outlying areas show lower percentages. The legend on the right clearly quantifies the color scale from 0% to over 90%, providing a clear and intuitive way to assess the spatial distribution of educational attainment across the region. This map offers valuable insights for policymakers, educators, and community planners interested in understanding and addressing educational disparities within Los Angeles County.
+
 
 
 

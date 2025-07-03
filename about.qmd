@@ -1,5 +1,4 @@
 ---
 title: "About"
 ---
-
-About this site
+This project was created for Kane's Data science bootcamp, I used AI tools.
