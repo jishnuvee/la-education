@@ -1,0 +1,80 @@
+---
+title: "Los Angeles Education "
+execute:
+    echo: false
+---
+
+
+
+
+
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: false
+
+options(dplyr.show_progress = FALSE)
+
+library(tidyverse)
+library(tidycensus)
+library(tigris)
+library(sf)
+library(leaflet)
+
+options(tigris_use_cache = TRUE)
+
+# Get education data without geometry
+edu_data <- get_acs(
+  geography = "tract",
+  state = "CA",
+  county = "Los Angeles",
+  year = 2022,
+  table = "B15003",
+  survey = "acs5",
+  geometry = FALSE,
+  cache_table = TRUE,
+  verbose = FALSE
+)
+
+# Get tract geometries separately (usually more reliable)
+la_tracts <- tracts(state = "CA", county = "Los Angeles", year = 2022, cb = TRUE)
+
+# Join by GEOID
+edu_clean <- edu_data %>%
+  filter(variable %in% c("B15003_001", paste0("B15003_0", 22:25))) %>%
+  select(GEOID, variable, estimate) %>%
+  pivot_wider(names_from = variable, values_from = estimate) %>%
+  mutate(
+    total = B15003_001,
+    bachelor_plus = B15003_022 + B15003_023 + B15003_024 + B15003_025,
+    pct_bachelor_plus = 100 * bachelor_plus / total
+  ) %>%
+  left_join(la_tracts, by = "GEOID") %>%
+  st_as_sf() %>%
+  filter(!st_is_empty(geometry), !is.na(pct_bachelor_plus))
+
+# Color palette
+pal <- colorNumeric("YlGnBu", domain = edu_clean$pct_bachelor_plus)
+
+# Leaflet map
+leaflet(edu_clean) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(
+    fillColor = ~pal(pct_bachelor_plus),
+    color = "white",
+    weight = 0.5,
+    fillOpacity = 0.7,
+    label = ~paste0(round(pct_bachelor_plus, 1), "% with Bachelor's+"),
+    highlightOptions = highlightOptions(weight = 2, color = "#666", fillOpacity = 0.9)
+  ) %>%
+  addLegend(
+    pal = pal,
+    values = ~pct_bachelor_plus,
+    title = "% with Bachelor's+",
+    position = "bottomright"
+  )
+
+
+```
+
